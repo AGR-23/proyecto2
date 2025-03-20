@@ -25,12 +25,12 @@ To clean all generated files (.o, executable, and .txt files): make clean
 
 ## Pending Tasks
 
-- Develop functions to copy blocks of data and update metadata.
+- Develop functions to copy blocks of data and update metadata.         (In progress)
 - Create unit tests for write functionality.
-- Design and implement efficient data recovery mechanisms.
-- Optimize read performance by minimizing data duplication.
-- Implement memory optimization techniques to reduce storage overhead.
-- Develop a garbage collection mechanism to free unused data blocks.
+- Design and implement efficient data recovery mechanisms.              (In progress)
+- Optimize read performance by minimizing data duplication.             (In progress)
+- Implement memory optimization techniques to reduce storage overhead.  (In progress)
+- Develop a garbage collection mechanism to free unused data blocks.    (In progress)
 - Analyze memory usage and identify possible optimizations.
 - Perform extensive testing to ensure stability.
 - Conduct a performance analysis to evaluate the efficiency of COW.
