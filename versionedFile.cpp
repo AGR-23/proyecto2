@@ -1,9 +1,25 @@
 #include "versionedFile.h"
-#include <fstream>
 
 versionedFile::versionedFile() : isOpen(false), selectedFile("") {}
 
 PerformanceTracker performanceTracker;
+
+const int MAX_VERSIONS = 5; // maximum number of versions to keep
+
+// Garbage collector to remove old versions
+void versionedFile::garbageCollector()
+{
+    if (versions.size() > MAX_VERSIONS)
+    {
+        std::string oldestVersion = versions.front().filename;
+        if (std::filesystem::exists(oldestVersion))
+        {
+            std::filesystem::remove(oldestVersion);
+            std::cout << "Deleted old version: " << oldestVersion << std::endl;
+        }
+        versions.erase(versions.begin());
+    }
+}
 
 // Allows the user to create a file with a custom name.
 bool versionedFile::create()
@@ -119,6 +135,8 @@ bool versionedFile::open()
 }
 
 // Reads from the currently opened file.
+// Reads and reconstructs the latest version by applying all deltas
+// Reads from the currently opened file.
 std::string versionedFile::read()
 {
     performanceTracker.start();
@@ -138,6 +156,7 @@ std::string versionedFile::read()
 }
 
 // Writes new data to a new version of the currently opened file.
+// Saves only the changes (deltas) instead of copying the whole file
 void versionedFile::write(const std::string &data)
 {
     performanceTracker.start();
@@ -172,6 +191,8 @@ void versionedFile::write(const std::string &data)
     versions.push_back({newVersion, data.size()});
 
     std::cout << "New version created: " << newVersion << std::endl;
+
+    garbageCollector(); // Remove old versions
     performanceTracker.report("Write");
 }
 

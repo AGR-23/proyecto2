@@ -11,11 +11,19 @@
 #include <unistd.h>
 #include <fstream>
 #include "PerformanceTracker.h"
+#include <sstream>
+
 
 struct FileVersion
 {
     std::string filename;
     size_t size;
+};
+
+struct Delta
+{
+    size_t position;
+    std::string NewData;
 };
 
 class versionedFile
@@ -38,6 +46,7 @@ public:
     {
         performanceTracker.summary();
     }
+    void garbageCollector();
 };
 
 #endif
