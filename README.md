@@ -10,6 +10,10 @@ To run the program: make run
 
 To clean all generated files (.o, executable, and .txt files): make clean
 
+
+# Tracking tools
+ valgrind --leak-check=full ./versionedFileApp -> tool to detect the memory leaks 
+
 ## Completed Tasks
 
 - Design the architecture of the library, including the API for reading and writing.
@@ -22,6 +26,7 @@ To clean all generated files (.o, executable, and .txt files): make clean
 - Create a function to list all file versions.
 - Write documentation for the API and how to use the library.
 - Create an example to demonstrate the usage of the library.
+-  Analyze memory usage and identify possible optimizations.
 
 ## Pending Tasks
 
@@ -31,7 +36,6 @@ To clean all generated files (.o, executable, and .txt files): make clean
 - Optimize read performance by minimizing data duplication.             (In progress)
 - Implement memory optimization techniques to reduce storage overhead.  (In progress)
 - Develop a garbage collection mechanism to free unused data blocks.    (In progress)
-- Analyze memory usage and identify possible optimizations.
 - Perform extensive testing to ensure stability.
 - Conduct a performance analysis to evaluate the efficiency of COW.
 - Write a final report summarizing findings and conclusions.

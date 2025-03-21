@@ -7,30 +7,37 @@
 #include <string>
 #include <unordered_map>
 #include <filesystem>
+#include <sys/sysinfo.h>
+#include <unistd.h>
+#include <fstream>
+#include "PerformanceTracker.h"
 
-struct FileVersion 
+struct FileVersion
 {
     std::string filename;
     size_t size;
 };
 
-class versionedFile 
+class versionedFile
 {
-    private:
-
+private:
     std::string filename;
     bool isOpen;
     std::string selectedFile;
     std::vector<FileVersion> versions;
+    PerformanceTracker performanceTracker;
 
-    public:
-
+public:
     versionedFile();
     bool create();
     bool open();
     std::string read();
-    void write(const std::string& data);
+    void write(const std::string &data);
     void close();
+    void showPerformanceSummary()
+    {
+        performanceTracker.summary();
+    }
 };
 
 #endif

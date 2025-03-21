@@ -1,9 +1,9 @@
-CXX = g++
-CXXFLAGS = -std=c++17 -Wall
+CXX = g++ 
+CXXFLAGS = -std=c++17 -Wall 
 
 TARGET = versionedFileApp
 
-SRC = main.cpp versionedFile.cpp
+SRC = main.cpp versionedFile.cpp 
 OBJ = $(SRC:.cpp=.o)
 
 $(TARGET): $(OBJ)
@@ -13,7 +13,7 @@ $(TARGET): $(OBJ)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 run: $(TARGET)
-	./$(TARGET)
+	 valgrind --leak-check=full ./$(TARGET)
 
 clean:
 	rm -f $(OBJ) $(TARGET) *.txt

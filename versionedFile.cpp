@@ -1,10 +1,14 @@
 #include "versionedFile.h"
+#include <fstream>
 
 versionedFile::versionedFile() : isOpen(false), selectedFile("") {}
+
+PerformanceTracker performanceTracker;
 
 // Allows the user to create a file with a custom name.
 bool versionedFile::create()
 {
+    performanceTracker.start();
     std::string userFilename;
 
     // Ask the user for the filename
@@ -16,7 +20,7 @@ bool versionedFile::create()
     std::string initialVersion = filename + "_v0.txt";
 
     // Check if the file already exists
-    if (std::filesystem::exists(initialVersion)) 
+    if (std::filesystem::exists(initialVersion))
     {
         std::cout << "Error: A file with this name already exists.\n";
         return false;
@@ -25,7 +29,7 @@ bool versionedFile::create()
     // Create the new file
     std::ofstream file(initialVersion);
 
-    if (!file) 
+    if (!file)
     {
         std::cout << "Error: Could not create file.\n";
         return false;
@@ -34,20 +38,22 @@ bool versionedFile::create()
     file.close();
     versions.push_back({initialVersion, 0});
     std::cout << "File created: " << initialVersion << std::endl;
+    performanceTracker.report("create");
     return true;
 }
 
 // Allows the user to open a versioned file by choosing a prefix and a version.
 bool versionedFile::open()
 {
+    performanceTracker.start();
     std::unordered_map<std::string, std::vector<std::string>> filePrefixes;
 
     // Scan the current directory for versioned files (*_vN.txt)
-    for (const auto& entry : std::filesystem::directory_iterator(".")) 
+    for (const auto &entry : std::filesystem::directory_iterator("."))
     {
         std::string name = entry.path().filename().string();
         size_t pos = name.find("_v");
-        if (pos != std::string::npos) 
+        if (pos != std::string::npos)
         {
             std::string prefix = name.substr(0, pos);
             filePrefixes[prefix].push_back(name);
@@ -55,7 +61,7 @@ bool versionedFile::open()
     }
 
     // If no versioned files are found, exit
-    if (filePrefixes.empty()) 
+    if (filePrefixes.empty())
     {
         std::cout << "No versioned files found.\n";
         return false;
@@ -66,7 +72,7 @@ bool versionedFile::open()
 
     int index = 1;
     std::vector<std::string> prefixes;
-    for (const auto& entry : filePrefixes) 
+    for (const auto &entry : filePrefixes)
     {
         std::cout << index << ". " << entry.first << std::endl;
         prefixes.push_back(entry.first);
@@ -77,7 +83,7 @@ bool versionedFile::open()
     std::cout << "Enter the number of the prefix you want to open: ";
     std::cin >> choice;
 
-    if (choice < 1 || choice > prefixes.size()) 
+    if (choice < 1 || choice > prefixes.size())
     {
         std::cout << "Invalid selection.\n";
         return false;
@@ -89,7 +95,7 @@ bool versionedFile::open()
     std::cout << "Available versions for " << filename << ":\n";
 
     index = 1;
-    for (const auto& file : filePrefixes[filename]) 
+    for (const auto &file : filePrefixes[filename])
     {
         std::cout << index << ". " << file << std::endl;
         index++;
@@ -98,7 +104,7 @@ bool versionedFile::open()
     std::cout << "Enter the number of the version you want to open: ";
     std::cin >> choice;
 
-    if (choice < 1 || choice > filePrefixes[filename].size()) 
+    if (choice < 1 || choice > filePrefixes[filename].size())
     {
         std::cout << "Invalid selection.\n";
         return false;
@@ -108,28 +114,34 @@ bool versionedFile::open()
     selectedFile = filePrefixes[filename][choice - 1];
     isOpen = true;
     std::cout << "Opened file: " << selectedFile << std::endl;
+    performanceTracker.report("Open");
     return true;
 }
 
 // Reads from the currently opened file.
 std::string versionedFile::read()
 {
-    if (!isOpen) 
+    performanceTracker.start();
+    if (!isOpen)
     {
         return "No file is open. Please open a file first.";
     }
 
     std::ifstream file(selectedFile);
-    if (!file) return "Error reading file.";
-    if (file.peek() == std::ifstream::traits_type::eof()) return "File is empty.";
+    if (!file)
+        return "Error reading file.";
+    if (file.peek() == std::ifstream::traits_type::eof())
+        return "File is empty.";
 
+    performanceTracker.report("Read");
     return std::string((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 }
 
 // Writes new data to a new version of the currently opened file.
-void versionedFile::write(const std::string& data)
+void versionedFile::write(const std::string &data)
 {
-    if (!isOpen) 
+    performanceTracker.start();
+    if (!isOpen)
     {
         std::cout << "No file is open. Please open a file first.\n";
         return;
@@ -137,7 +149,7 @@ void versionedFile::write(const std::string& data)
 
     // Extract prefix from the selected file name
     size_t pos = selectedFile.find("_v");
-    if (pos == std::string::npos) 
+    if (pos == std::string::npos)
     {
         std::cout << "Error: Invalid file name format.\n";
         return;
@@ -149,7 +161,7 @@ void versionedFile::write(const std::string& data)
 
     // Create and write to the new versioned file
     std::ofstream file(newVersion);
-    if (!file) 
+    if (!file)
     {
         std::cout << "Error creating file.\n";
         return;
@@ -160,12 +172,14 @@ void versionedFile::write(const std::string& data)
     versions.push_back({newVersion, data.size()});
 
     std::cout << "New version created: " << newVersion << std::endl;
+    performanceTracker.report("Write");
 }
 
 // Closes the currently opened file.
 void versionedFile::close()
 {
-    if (!isOpen) 
+    performanceTracker.start();
+    if (!isOpen)
     {
         std::cout << "No file is open.\n";
         return;
@@ -173,5 +187,6 @@ void versionedFile::close()
 
     std::cout << "Closing file: " << selectedFile << std::endl;
     isOpen = false;
+    performanceTracker.report("Close");
     selectedFile = "";
 }
