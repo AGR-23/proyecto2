@@ -95,7 +95,7 @@ bool versionedFile::open()
         index++;
     }
 
-    int choice;
+    size_t choice;
     std::cout << "Enter the number of the prefix you want to open: ";
     std::cin >> choice;
 

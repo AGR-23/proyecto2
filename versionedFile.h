@@ -10,7 +10,7 @@
 #include <sys/sysinfo.h>
 #include <unistd.h>
 #include <fstream>
-#include "PerformanceTracker.h"
+#include "performanceTracker.h"
 #include <sstream>
 
 
