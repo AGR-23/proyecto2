@@ -13,7 +13,7 @@ private:
     size_t block_size;
     std::unordered_map<std::string, Metadata> files;
     VersionGraph version_graph;
-    BlockManager block_manager; // 🔹 Agregado para gestionar los bloques
+    BlockManager block_manager; //Agregado para gestionar los bloques
 
 public:
     FileSystem(const std::string& storage_path, size_t block_size = 4096);

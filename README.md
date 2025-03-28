@@ -100,3 +100,10 @@ El sistema usa un archivo binario (`filesystem.bin`) en lugar de un almacenamien
 ## 4. Compilación y ejecución  
 
 Para compilar el proyecto, usar `make` y luego `make run`
+
+Another approach is known as copy-on-write (yes, COW), and is used
+in a number of popular file systems, including Sun’s ZFS [B07]. This technique never overwrites files or directories in place; rather, it places new
+updates to previously unused locations on disk. After a number of updates are completed, COW file systems flip the root structure of the file
+system to include pointers to the newly updated structures. Doing so
+makes keeping the file system consistent straightforward. We’ll be learning more about this technique when we discuss the log-structured file
+system (LFS) in a future chapter; LFS is an early example of a COW

@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -O2
-TARGET = filesystem
+TARGET = FileSystem
 SRC = main.cpp FileSystem.cpp Metadata.cpp VersionGraph.cpp BlockManager.cpp
 OBJ = $(SRC:.cpp=.o)
 
