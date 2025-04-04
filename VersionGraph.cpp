@@ -286,3 +286,23 @@ void VersionGraph::updateFileSize(const std::string &file_name, size_t new_size)
         it->second.updateFileSize(new_size);
     }
 }
+
+VersionGraph::VersionMemoryUsage VersionGraph::getVersionMemoryUsage() const {
+    VersionMemoryUsage usage;
+    usage.total_files = files_metadata.size();
+    
+    size_t total_versions = 0;
+    for (const auto& [_, meta] : files_metadata) {
+        total_versions += meta.getVersionHistory().size();
+    }
+    usage.total_versions = total_versions;
+    
+    usage.avg_versions_per_file = usage.total_files > 0 
+                                ? total_versions / usage.total_files 
+                                : 0;
+    
+    // Estimación: 100 bytes por versión (ajustable)
+    usage.metadata_size_approx = total_versions * 100; 
+    
+    return usage;
+}

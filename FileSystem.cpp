@@ -29,6 +29,31 @@ FileSystem::~FileSystem()
     sync();
 }
 
+// Función para estadisticas de memoria 
+FileSystem::GlobalMemoryUsage FileSystem::getMemoryUsage() const {
+    GlobalMemoryUsage usage;
+    usage.blocks = block_manager.getMemoryUsage();
+    usage.versions = version_graph.getVersionMemoryUsage();
+    return usage;
+}
+
+void FileSystem::printMemoryUsage() const {
+    auto usage = getMemoryUsage();
+    
+    std::cout << "\n=== Uso de Memoria del Sistema ===\n";
+    std::cout << "Bloques físicos:\n"
+              << "  Usados: " << usage.blocks.used_blocks << "/" << usage.blocks.total_blocks 
+              << " bloques (" << (usage.blocks.used_bytes / 1024) << " KB)\n"
+              << "  Libres: " << usage.blocks.free_blocks << " bloques\n";
+    
+    std::cout << "\nVersiones lógicas:\n"
+              << "  Archivos: " << usage.versions.total_files << "\n"
+              << "  Versiones totales: " << usage.versions.total_versions << "\n"
+              << "  Metadatos aprox.: " << (usage.versions.metadata_size_approx / 1024) << " KB\n";
+    
+    std::cout << "\nTotal estimado: " << (usage.total_memory_approx() / 1024) << " KB\n";
+}
+
 bool FileSystem::create(const std::string &file_name, const std::string &file_type)
 {
     if (version_graph.fileExists(file_name))
@@ -475,4 +500,5 @@ std::vector<size_t> FileSystem::calculateModifiedBlocks(const std::vector<char> 
     }
 
     return modified_blocks;
+
 }

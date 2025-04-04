@@ -132,6 +132,18 @@ bool BlockManager::isBlockUsed(size_t block_index) const {
     return (it != block_map.end()) && it->second;
 }
 
+// Implementación del nuevo método para estadísticas de memoria
+BlockManager::MemoryUsage BlockManager::getMemoryUsage() const {
+    MemoryUsage usage;
+    usage.total_blocks = total_blocks;
+    usage.used_blocks = std::count_if(block_map.begin(), block_map.end(), 
+                                    [](const auto& p) { return p.second; });
+    usage.free_blocks = total_blocks - usage.used_blocks;
+    usage.total_bytes = total_blocks * BLOCK_SIZE;
+    usage.used_bytes = usage.used_blocks * BLOCK_SIZE;
+    return usage;
+}
+
 void BlockManager::sync() {
     fsync(file_descriptor);
     // También guardar mapa de bloques

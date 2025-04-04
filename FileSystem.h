@@ -28,7 +28,7 @@ public:
     // Cerrar un archivo
     bool close(const std::string &filename);
 
-    // Restaurar un archivo a una versión anterior
+    // Restaurar un archivo a    una versión anterior
     bool rollbackFile(const std::string &file_name, size_t version_id);
 
     // Mostrar metadatos de un archivo
@@ -45,6 +45,20 @@ public:
 
     // Para depuración: inspeccionar contenido real de bloques
     void inspectBlocks(const std::string &file_name);
+
+    // Función para mostrar estadísticas de memoria
+    struct GlobalMemoryUsage
+    {
+        BlockManager::MemoryUsage blocks;
+        VersionGraph::VersionMemoryUsage versions;
+        size_t total_memory_approx() const
+        {
+            return blocks.used_bytes + versions.metadata_size_approx;
+        }
+    };
+
+    GlobalMemoryUsage getMemoryUsage() const;
+    void printMemoryUsage() const; // Versión amigable para consola
 
 private:
     // Mapa de archivos abiertos: {nombre_archivo -> metadata + estado}

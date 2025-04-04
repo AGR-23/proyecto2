@@ -3,49 +3,50 @@
 #include <string>
 #include <limits>
 
-
 void mostrarMenu()
 {
 
-std::cout << "\n===== SISTEMA DE ARCHIVOS COW ====\n"
-          << "1. Crear archivo\n"
-          << "2. Abrir archivo\n"
-          << "3. Cerrar archivo\n"
-          << "4. Escribir en archivo\n"
-          << "5. Leer archivo\n"
-          << "6. Mostrar metadatos\n"
-          << "7. Listar archivos\n"
-          << "8. Rollback a versión anterior\n"
-          << "9. Sincronizar cambios\n"
-          << "10. Inspeccionar bloques (debug)\n"
-          << "11. Salir\n"
-          << "Selecciona una opción: ";
+    std::cout << "\n===== SISTEMA DE ARCHIVOS COW ====\n"
+              << "1. Crear archivo\n"
+              << "2. Abrir archivo\n"
+              << "3. Cerrar archivo\n"
+              << "4. Escribir en archivo\n"
+              << "5. Leer archivo\n"
+              << "6. Mostrar metadatos\n"
+              << "7. Listar archivos\n"
+              << "8. Rollback a versión anterior\n"
+              << "9. Sincronizar cambios\n"
+              << "10. Inspeccionar bloques (debug)\n"
+              << "11. Ver estadisticas de Memoria\n"
+              << "12. Salir\n"
+              << "Selecciona una opción: ";
 }
 
 std::string leerLinea()
 {
-std::string linea;
-std::getline(std::cin, linea);
-return linea;
+    std::string linea;
+    std::getline(std::cin, linea);
+    return linea;
 }
 
 int leerNumero()
 {
-int numero;
-std::cin >> numero;
-std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-return numero;
+    int numero;
+    std::cin >> numero;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    return numero;
 }
 
 int main()
 {
-   
+    /*/
     std::cout << "Inicializando sistema de archivos...\n";
     FileSystem fs("storage.bin", 10); // 10 MB de almacenamiento
 
     int opcion;
     std::string nombre_archivo_abierto; // Track del archivo abierto
 
+    
     do
     {
         mostrarMenu();
@@ -213,6 +214,13 @@ int main()
         }
 
         case 11:
+            fs.printMemoryUsage();
+            break;
+
+        default:
+            std::cout << "Opción no válida.\n";
+
+        case 12:
         { // Salir
             if (!nombre_archivo_abierto.empty())
             {
@@ -221,14 +229,10 @@ int main()
             std::cout << "Cerrando sistema...\n";
             break;
         }
-
-        default:
-            std::cout << "Opción no válida.\n";
         }
-    } while (opcion != 11);
+    } while (opcion != 12);
+/**/
 
-
-/*/
     // 1. Inicialización del sistema de archivos
     std::cout << "=== DEMOSTRACIÓN BIBLIOTECA COW - <):>D ===\n";
     FileSystem fs("cow_data.bin", 20); // 20 MB de almacenamiento
@@ -243,8 +247,9 @@ int main()
     fs.open("foo.txt");
 
     // Escritura inicial
-    fs.write("foo.txt", 0, {'H', 'O', 'L', 'A', ' ', 'E', 'N', 'E', 'R', 'I', 'O'});
+    fs.write("foo.txt", 0, {'H', 'O', 'L', 'A', ' ', 'M', 'U', 'N', 'D', 'O', '!'});
     std::cout << "Escritura inicial completada.\n";
+    fs.printMemoryUsage(); // mostrar uso de memoria
 
     // Mostrar contenido y metadatos
     auto contenido = fs.read("foo.txt");
@@ -260,10 +265,11 @@ int main()
     std::cout << "Nueva versión: " << fs.getCurrentVersion("foo.txt") << "\n";
     std::cout << "Contenido actual: " << std::string(contenido.begin(), contenido.end()) << "\n";
     fs.printFileMetadata("foo.txt");
+    fs.printMemoryUsage(); // mostrar uso de memoria
 
     // 5. Rollback a versión anterior
-    std::cout << "\n--- Rollback a versión 1 ---\n";
-    fs.rollbackFile("foo.txt", 1);
+    std::cout << "\n--- Rollback a versión 2 ---\n";
+    fs.rollbackFile("foo.txt", 2);
     auto act_cont = fs.read("foo.txt");
     std::cout << "Contenido Actual: " << std::string(act_cont.begin(), act_cont.end()) << "\n";
 
@@ -278,13 +284,12 @@ int main()
     std::cout << "\n--- Mantenimiento del sistema ---\n";
     fs.listFiles();
     fs.sync();
-    std::cout << "Todos los cambios guardados en disco.\n";
 
     // 8. Limpieza
 
     fs.close("datos.bin");
 
     std::cout << "\n=== Demostración completada ===\n";
-    */
+
     return 0;
 }

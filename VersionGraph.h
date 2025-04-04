@@ -41,6 +41,16 @@ public:
 
     // Eliminar bloques no referenciados por ninguna versión
     void collectGarbage();
+
+    // Función para mostrar estadísticas de memoria
+    struct VersionMemoryUsage {
+        size_t total_files;
+        size_t total_versions;
+        size_t avg_versions_per_file;
+        size_t metadata_size_approx; // Tamaño estimado de metadatos
+    };
+    
+    VersionMemoryUsage getVersionMemoryUsage() const;
     
 private:
     BlockManager& block_manager;
