@@ -290,6 +290,7 @@ int main()
     fs.close("datos.bin");
 
     std::cout << "\n=== Demostración completada ===\n";
-
     return 0;
+
+
 }

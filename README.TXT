@@ -43,6 +43,7 @@ OPERACIONES BÁSICAS:
 - listFiles()             -> Lista todos los archivos creados
 - inspectBlocks(file)     -> Muestra el contenido real de bloques del archivo
 - sync()                  -> Guarda cambios y realiza limpieza de bloques
+- printMemoryUsage()   -> Muestra estadisticas de memoria
 
 GESTIÓN DE VERSIONES:
 
@@ -165,6 +166,64 @@ Compilación:
 
 Ejecución:
   ./cowfs
+
+  ================================================================================
+9. INTEGRACIÓN CON PYTHON
+================================================================================
+
+Además del uso interactivo vía consola, la biblioteca fue probada y conectada 
+exitosamente con Python 3 mediante la librería `ctypes`. Esto permite controlar 
+el sistema de archivos desde scripts externos y lenguajes de alto nivel.
+
+--------------------------------------------------------------------------------
+9.1 Compilación del puente
+--------------------------------------------------------------------------------
+
+Se generó una biblioteca compartida `libcowfs.so` que actúa como puente entre 
+Python y C++, exponiendo funciones en formato C compatible con ctypes:
+
+    g++ -fPIC -shared -o libcowfs.so bridge.cpp BlockManager.cpp FileSystem.cpp VersionGraph.cpp Metadata.cpp -std=c++17
+
+--------------------------------------------------------------------------------
+9.2 Funciones exportadas desde C++
+--------------------------------------------------------------------------------
+
+Las funciones disponibles para invocar desde Python son:
+
+    - create(const char* file, const char* type)
+    - open(const char* file)
+    - write(int offset, const char* data)
+    - char* read()
+    - rollback(int version)
+    - close()
+    - listFiles()
+    - inspectBlocks(const char* file)
+    - sync()
+    - printMemoryUsage()
+
+--------------------------------------------------------------------------------
+9.3 Ejemplo de uso en Python
+--------------------------------------------------------------------------------
+
+    import ctypes
+
+    lib = ctypes.CDLL('./libcowfs.so')
+
+    lib.create(b"test.txt", b"txt")
+    lib.open(b"test.txt")
+    lib.write(0, b"Hola desde Python")
+    print(lib.read().decode('utf-8'))  # Salida esperada: Hola desde Python
+    lib.printMemoryUsage()
+    lib.close()
+
+--------------------------------------------------------------------------------
+9.4 Observaciones sobre la integración
+--------------------------------------------------------------------------------
+
+- Se usaron únicamente tipos primitivos (int, char*) para facilitar el enlace.
+- La integración permite automatizar pruebas o incluir interfaces gráficas.
+- La lógica COW permanece encapsulada y reutilizable desde múltiples entornos.
+
 
 -----------------------------------------------------------
 10. FUENTE DE ASISTENCIA Y REFERENCIAS
